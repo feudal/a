@@ -13,7 +13,7 @@ const TNAFLIX_URL = "https://www.tnaflix.com";
 const app = express();
 require("dotenv").config();
 
-const PORT = 4444;
+const PORT = 3366;
 const getRandomPageFromSpank = () => {
   //https://spankbang.com/s/pmv/2/?o=all
   const page = Math.floor(Math.random() * 335) + 1;
