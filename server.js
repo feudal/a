@@ -76,7 +76,6 @@ async function scrapeTnaflix() {
 
     const $ = cheerio.load(content);
     const videoBlocks = $(".thumbsList li");
-    console.log({ videoBlocks });
 
     // Choose a random video block
     const randomIndex = Math.floor(Math.random() * videoBlocks.length);
@@ -91,8 +90,6 @@ async function scrapeTnaflix() {
     const link = `${TNAFLIX_URL}${randomVideoBlock
       .find("a.newVideoTitle")
       .attr("href")}`;
-
-    console.log({ title, date, duration, link });
 
     return `${title}\n${date}\n${duration}\n${link}`;
   } catch (error) {
