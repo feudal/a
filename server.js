@@ -70,9 +70,21 @@ async function scrapeTnaflix() {
   const url = getRandomPageFromTnaflix();
   try {
     const browser = await puppeteer.launch({ headless: "new" });
+
+    // wait 3s before scraping
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     const page = await browser.newPage();
+
+    // wait 3s before scraping
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     await page.goto(url);
+
+    // wait 3s before scraping
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     const content = await page.content();
+
+    // wait 3s before scraping
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const $ = cheerio.load(content);
     const videoBlocks = $(".thumbsList li");
@@ -113,24 +125,16 @@ bot
   .then(() => console.log("Comenzile au fost setate cu succes"))
   .catch((error) => console.error(error));
 
-// Handle incoming messages
-bot.on("message", async (msg) => {
-  const chatId = msg.chat.id;
+bot.onText(/\/start/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Bun venit!");
+});
 
-  switch (msg.text) {
-    case "/start":
-      bot.sendMessage(chatId, "Bun venit!");
-      break;
-    case "/spank":
-      const video = await scrapeSpank();
-      bot.sendMessage(chatId, video);
-      break;
-    case "/tnaflix":
-      const video2 = await scrapeTnaflix();
-      bot.sendMessage(chatId, video2);
-      break;
-    default:
-      bot.sendMessage(chatId, "Comanda necunoscută, încearcă din nou");
-      break;
-  }
+bot.onText(/\/spank/, async (msg) => {
+  const video = await scrapeSpank();
+  bot.sendMessage(msg.chat.id, video);
+});
+
+bot.onText(/\/tnaflix/, async (msg) => {
+  const video = await scrapeTnaflix();
+  bot.sendMessage(msg.chat.id, video);
 });
