@@ -30,12 +30,16 @@ const getRandomPageFromTnaflix = () => {
 
 const COMMANDS = [
   {
-    command: "spank",
+    command: "random",
     description: "Arata un video random",
   },
   {
+    command: "spank",
+    description: "Arata un video de pe spankbang",
+  },
+  {
     command: "tnaflix",
-    description: "Arata un video random",
+    description: "Arata un video de pe tnaflix",
   },
 ];
 
@@ -121,6 +125,12 @@ bot
 
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, "Bun venit!");
+});
+
+bot.onText(/\/random/, async (msg) => {
+  const video =
+    Math.random() > 0.5 ? await scrapeSpank() : await scrapeTnaflix();
+  bot.sendMessage(msg.chat.id, video);
 });
 
 bot.onText(/\/spank/, async (msg) => {
