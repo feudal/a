@@ -42,7 +42,10 @@ const COMMANDS = [
 async function scrapeSpank() {
   const url = getRandomPageFromSpank();
   try {
-    const browser = await puppeteer.launch({ headless: "new" });
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
     await page.goto(url);
     const content = await page.content();
@@ -70,21 +73,9 @@ async function scrapeTnaflix() {
   const url = getRandomPageFromTnaflix();
   try {
     const browser = await puppeteer.launch({ headless: "new" });
-
-    // wait 3s before scraping
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     const page = await browser.newPage();
-
-    // wait 3s before scraping
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     await page.goto(url);
-
-    // wait 3s before scraping
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     const content = await page.content();
-
-    // wait 3s before scraping
-    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const $ = cheerio.load(content);
     const videoBlocks = $(".thumbsList li");
