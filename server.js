@@ -53,6 +53,7 @@ async function scrapeSpank() {
     const page = await browser.newPage();
     await page.goto(url);
     const content = await page.content();
+    await browser.close();
 
     const $ = cheerio.load(content);
     const videoBlocks = $(".video-item");
@@ -83,6 +84,7 @@ async function scrapeTnaflix() {
     const page = await browser.newPage();
     await page.goto(url);
     const content = await page.content();
+    await browser.close();
 
     const $ = cheerio.load(content);
     const videoBlocks = $(".thumbsList li");
