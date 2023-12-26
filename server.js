@@ -80,7 +80,9 @@ async function scrapeSpank() {
     const info = randomVideoBlock.find(".v.d").text().trim();
     const link = `${SPANK_URL}${$("div.video-item a.n").attr("href")}`;
 
-    return `${title}\n${time}\n${info}\n${link}`;
+    return `${title}\nInfo: ${time} / ${info
+      .split("   ")
+      .join(" / ")}\n${link}`;
   } catch (error) {
     console.error("Error:", error);
   }
@@ -115,7 +117,7 @@ async function scrapeTnaflix() {
       .find("a.newVideoTitle")
       .attr("href")}`;
 
-    return `${title}\n${date}\n${duration}\n${link}`;
+    return `${title}\nInfo: ${duration} / ${date}\n${link}`;
   } catch (error) {
     console.error("Error:", error);
   }
