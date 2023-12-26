@@ -9,6 +9,7 @@ puppeteer.use(StealthPlugin());
 
 const SPANK_URL = "https://spankbang.com";
 const TNAFLIX_URL = "https://www.tnaflix.com";
+const PORNHUB_URL = "https://www.pornhub.com";
 
 const app = express();
 require("dotenv").config();
@@ -28,6 +29,13 @@ const getRandomPageFromTnaflix = () => {
   return `${TNAFLIX_URL}/search.php?what=pmv&tab=&page=${page}`;
 };
 
+const getRandomPageFromPornhub = () => {
+  //https://www.pornhub.com/video/search?search=pmv&page=69
+  const page = Math.floor(Math.random() * 69) + 1;
+
+  return `https://www.pornhub.com/video/search?search=pmv&page=${page}`;
+};
+
 const COMMANDS = [
   {
     command: "random",
@@ -40,6 +48,10 @@ const COMMANDS = [
   {
     command: "tnaflix",
     description: "Arata un video de pe tnaflix",
+  },
+  {
+    command: "pornhub",
+    description: "Arata un video de pe pornhub",
   },
 ];
 
@@ -109,6 +121,40 @@ async function scrapeTnaflix() {
   }
 }
 
+async function scrapePornhub() {
+  const url = getRandomPageFromPornhub();
+  try {
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+    await page.goto(url);
+    const content = await page.content();
+    await browser.close();
+
+    const $ = cheerio.load(content);
+    const videoBlocks = $(".pcVideoListItem");
+
+    // Choose a random video block
+    const randomIndex = Math.floor(Math.random() * videoBlocks.length);
+    const randomVideo = videoBlocks.eq(randomIndex);
+
+    const title = randomVideo.find(".title a").text().trim();
+    const duration = randomVideo.find(".duration").text().trim();
+    const ratingValue = randomVideo
+      .find(".rating-container .value")
+      .text()
+      .trim();
+    const views = randomVideo.find(".views var").text().trim();
+    const link = `${PORNHUB_URL}${randomVideo.find(".title a").attr("href")}`;
+
+    return `${title}\nInfo: ${duration} / ${views} / ${ratingValue}\n${link}`;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 const listener = app.listen(PORT, () => {
   console.log(`Aplicația este pornită pe portul ${listener.address().port}`);
 });
@@ -130,8 +176,9 @@ bot.onText(/\/start/, (msg) => {
 });
 
 bot.onText(/\/random/, async (msg) => {
-  const video =
-    Math.random() > 0.5 ? await scrapeSpank() : await scrapeTnaflix();
+  const scrapers = [scrapeSpank, scrapeTnaflix, scrapePornhub];
+  const video = await scrapers[Math.floor(Math.random() * scrapers.length)]();
+
   bot.sendMessage(msg.chat.id, video);
 });
 
@@ -143,4 +190,11 @@ bot.onText(/\/spank/, async (msg) => {
 bot.onText(/\/tnaflix/, async (msg) => {
   const video = await scrapeTnaflix();
   bot.sendMessage(msg.chat.id, video);
+});
+
+bot.onText(/\/pornhub/, async (msg) => {
+  const video = await scrapePornhub();
+  bot.sendMessage(msg.chat.id, video, {
+    disable_web_page_preview: true,
+  });
 });
