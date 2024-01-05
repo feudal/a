@@ -7,6 +7,11 @@ const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
+const PUPPETEER_CONFIG = {
+  headless: "new",
+  args: ["--no-sandbox", "--disable-setuid-sandbox"],
+};
+
 const SPANK_URL = "https://spankbang.com";
 const TNAFLIX_URL = "https://www.tnaflix.com";
 const PORNHUB_URL = "https://www.pornhub.com";
@@ -58,10 +63,7 @@ const COMMANDS = [
 async function scrapeSpank() {
   const url = getRandomPageFromSpank();
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    const browser = await puppeteer.launch(PUPPETEER_CONFIG);
     const page = await browser.newPage();
     await page.goto(url);
     const content = await page.content();
@@ -91,10 +93,7 @@ async function scrapeSpank() {
 async function scrapeTnaflix() {
   const url = getRandomPageFromTnaflix();
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    const browser = await puppeteer.launch(PUPPETEER_CONFIG);
     const page = await browser.newPage();
     await page.goto(url);
     const content = await page.content();
@@ -126,10 +125,7 @@ async function scrapeTnaflix() {
 async function scrapePornhub() {
   const url = getRandomPageFromPornhub();
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    const browser = await puppeteer.launch(PUPPETEER_CONFIG);
     const page = await browser.newPage();
     await page.goto(url);
     const content = await page.content();
